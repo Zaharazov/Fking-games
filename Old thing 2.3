@@ -1,0 +1,447 @@
+#include <iostream>          
+using namespace std;
+int main()
+{
+	int korabli1 = 0, proverka1, korabli2 = 0, proverka2;
+	int arr[100][100];
+	int arr2[100][100];
+
+	cout << "How do you want to play?" << endl;
+	cout << "Write '1' if you want to play against the computer" << endl;
+	cout << "Write '2' if you want to play against the second player" << endl;
+	cout << endl;
+	cout << "UPDATE: Added computer battle mode!" << endl;
+
+	int vibor;
+	int rzm;
+
+	do {
+		cin >> vibor;
+		if (vibor == 1)                            // ИГРА С ГЛУПЫМ КОМПЬЮТЕРОМ
+		{
+			cout << "Enter the size of the field:" << endl;
+			cin >> rzm;
+
+			if (rzm < 2 || rzm > 10)
+			{
+				cout << "You entered an incorrect field size value." << endl;
+				cout << "Please restart the program and enter a value in the range from 2x2 to 10x10." << endl;
+				system("pause");         //проверка правильности значений размера поля
+				return 0;
+			}
+			cout << "The player places the ships!" << endl;
+
+			for (int i = 0; i < rzm; i++)
+			{
+				for (int j = 0; j < rzm; j++) //ввод поля игрока
+				{
+					cin >> arr[i][j];
+				}
+			}
+			cout << "The player has placed his ships!" << endl;
+			cout << "The computer places the ships!" << endl;
+
+			for (int i = 0; i < rzm; i++)
+			{
+				for (int j = 0; j < rzm; j++)      //комп заполняет поле
+				{
+					arr2[i][j] = (i+j)%2;
+				}
+			}
+
+			cout << "The computer has placed his ships!" << endl;
+
+			for (int i = 0; i < rzm; i++)
+			{
+				for (int j = 0; j < rzm; j++) //подсчет кораблей 1
+				{
+					if (arr[i][j] == 1)
+					{
+						korabli1 = korabli1 + 1;
+					}
+				}
+			}
+
+			for (int i = 0; i < rzm; i++)
+			{
+				for (int j = 0; j < rzm; j++) //подсчет кораблей 2
+				{
+					if (arr2[i][j] == 1)
+					{
+						korabli2 = korabli2 + 1;
+					}
+				}
+			}
+
+			cout << "Let's start the fight!" << endl;
+
+			int n, m, poradok = 1;
+			proverka1 = korabli1;
+			proverka2 = korabli2;
+
+				int kompn=0, kompm=0;
+
+			while (proverka1 != 0 || proverka2 != 0)
+			{
+				
+
+				if (poradok % 2 == 1)                                 //ХОД ИГРОКА
+				{
+					cout << "PLAYER, YOUR TURN!" << endl;
+					cout << "Press Enter to continue" << endl;
+					system("pause");
+
+					cout << "Enter the coordinates of the cell you want to shoot at:" << endl;
+
+					cin >> n >> m;
+
+					if (arr2[n][m] == 1)    // если попали по кораблю
+					{
+						cout << "PLAYER HITS THE SHIP!" << endl;
+
+						arr2[n][m] = 2;
+						proverka2 = proverka2 - 1;
+
+						for (int i = 0; i < rzm; i++)
+						{
+							for (int j = 0; j < rzm; j++)    // вывод поля после выстрела
+							{
+								cout << arr2[i][j] << " ";
+							}
+							cout << endl;
+						}
+						cout << endl;
+					}
+
+					else if (arr2[n][m] == 2)              //повторное попадание в какую-то точку
+					{
+						cout << "You have already shot at this point!" << endl;
+					}
+
+					else if (arr2[n][m] == 0)
+					{                                       //если не попали по кораблю
+						cout << "PLAYER MISSED!" << endl;
+
+						arr2[n][m] = 2;
+						for (int i = 0; i < rzm; i++)
+						{
+							for (int j = 0; j < rzm; j++)
+							{
+								cout << arr2[i][j] << " ";     //вывод поля после выстрела
+							}
+							cout << endl;
+						}
+						cout << endl;
+					}
+
+					cout << "PLAYER SHIPS:" << proverka1 << " " << "MY SHIPS:" << proverka2 << endl;
+				
+
+				}
+
+				if (proverka1 == 0)                    //ОПРЕДЕЛЕНИЕ ПОБЕДИТЕЛЯ
+				{
+					cout << "COMPUTER WINS!" << endl;
+
+					system("pause");
+					return 0;
+
+					break;
+				}
+
+				if (proverka2 == 0)
+				{
+					cout << "PLAYER WINS!" << endl;
+
+					system("pause");
+					return 0;
+
+					break;
+				}
+
+
+				if (poradok % 2 == 1)                                //ХОД КОМПЬЮТЕРА  
+				{
+					cout << "MY TURN!" << endl;
+
+					
+					n = kompn;
+					m = kompm;
+					
+
+					if (arr[n][m] == 1)    // если попали по кораблю
+					{
+						cout << "COMPUTER HITS YOUR SHIP!" << endl;
+						cout << "HAHAHA I hit your ship right now!" << endl;
+
+						arr[n][m] = 2;
+						proverka1 = proverka1 - 1;
+
+						for (int i = 0; i < rzm; i++)
+						{
+							for (int j = 0; j < rzm; j++)    // вывод поля после выстрела
+							{
+								cout << arr[i][j] << " ";
+							}
+							cout << endl;
+						}
+						cout << endl;
+					}
+
+					else if (arr[n][m] == 2)              //повторное попадание в какую-то точку
+					{
+						cout << "Computer have already shot at this point!" << endl;
+						cout << "I accidentally did it, you didn't see anything." << endl; //вообще комп по идее не должен стрелять куда-то еще раз
+					}
+
+					else if (arr[n][m] == 0)
+					{                                       //если не попали по кораблю
+						cout << "COMPUTER MISSED!" << endl;
+						cout << "Okay, you got lucky this time." << endl;
+
+						arr[n][m] = 2;
+						for (int i = 0; i < rzm; i++)
+						{
+							for (int j = 0; j < rzm; j++)
+							{
+								cout << arr[i][j] << " ";     //вывод поля после выстрела
+							}
+							cout << endl;
+						}
+						cout << endl;
+					}
+
+					if (kompm == rzm - 1)
+					{
+						kompn = kompn + 1;
+						kompm = 0;
+					}
+					else
+					{
+						kompm = kompm + 1;
+					}
+					
+				
+				}
+
+					
+					
+
+
+				
+				poradok = poradok + 1;
+			}
+		}
+
+
+		if (vibor > 2 || vibor <= 0)
+		{
+			cout << "INCORRECT VALUE ENTERED" << endl;
+		}
+	} while (vibor != 2);                      //НИЖЕ ИГРА 1 ПРОТИВ 1
+
+	
+	cout << "Enter the size of the field:" << endl;    //ввод размера поля
+	cin >> rzm;
+
+	if (rzm < 2 || rzm > 10)
+	{
+		cout << "You entered an incorrect field size value." << endl;
+		cout << "Please restart the program and enter a value in the range from 2x2 to 10x10." << endl;
+		system("pause");         //проверка правильности значений размера поля
+		return 0;
+	}
+
+	if (vibor == 2)
+	{
+
+		cout << "The first player places the ships!" << endl;
+
+		for (int i = 0; i < rzm; i++)
+		{
+			for (int j = 0; j < rzm; j++) //ввод поля 1
+			{
+				cin >> arr[i][j];
+			}
+		}
+		cout << "The first player has placed his ships!" << endl;
+		cout << "The second player places the ships!" << endl;
+
+		for (int i = 0; i < rzm; i++)
+		{
+			for (int j = 0; j < rzm; j++) //ввод поля 2
+			{
+				cin >> arr2[i][j];
+			}
+		}
+
+		cout << "The second player has placed his ships!" << endl;
+
+		for (int i = 0; i < rzm; i++)
+		{
+			for (int j = 0; j < rzm; j++) //подсчет кораблей 1
+			{
+				if (arr[i][j] == 1)
+				{
+					korabli1 = korabli1 + 1;
+				}
+			}
+		}
+
+		for (int i = 0; i < rzm; i++)
+		{
+			for (int j = 0; j < rzm; j++) //подсчет кораблей 2
+			{
+				if (arr2[i][j] == 1)
+				{
+					korabli2 = korabli2 + 1;
+				}
+			}
+		}
+
+		cout << "Let's start the fight!" << endl;
+
+		int n, m, poradok = 1;
+		proverka1 = korabli1;
+		proverka2 = korabli2;
+		while (proverka1 != 0 || proverka2 != 0)
+		{
+
+
+			if (poradok % 2 == 0)                                    //ХОД ВТОРОГО ИГРОКА
+			{
+				cout << "SECOND PLAYER, YOUR TURN!" << endl;
+				cout << "Press Enter to continue" << endl;
+				system("pause");
+
+				cout << 2 << 2 << 2 << 2 << 2 << 2 << 2 << endl;
+				cout << 2 << " " << " " << " " << " " << " " << 2 << endl;
+				cout << 2 << " " << 2 << 2 << 2 << " " << 2 << endl;
+				cout << 2 << " " << " " << " " << 2 << " " << 2 << endl;
+				cout << 2 << " " << " " << 2 << " " << " " << 2 << endl;
+				cout << 2 << " " << 2 << " " << " " << " " << 2 << endl;
+				cout << 2 << " " << 2 << 2 << 2 << " " << 2 << endl;
+				cout << 2 << " " << " " << " " << " " << " " << 2 << endl;
+				cout << 2 << 2 << 2 << 2 << 2 << 2 << 2 << endl;
+
+				cout << "Enter the coordinates of the cell you want to shoot at:" << endl;
+
+				cin >> n >> m;
+
+				if (arr[n][m] == 1)    // если попали по кораблю
+				{
+					cout << "SECOND PLAYER HITS THE SHIP!" << endl;
+
+					arr[n][m] = 2;
+					proverka1 = proverka1 - 1;
+
+					for (int i = 0; i < rzm; i++)
+					{
+						for (int j = 0; j < rzm; j++)    // вывод поля после выстрела
+						{
+							cout << arr[i][j] << " ";
+						}
+						cout << endl;
+					}
+					cout << endl;
+				}
+
+				else if (arr[n][m] == 2)              //повторное попадание в какую-то точку
+				{
+					cout << "Computer have already shot at this point!" << endl;
+				}
+
+				else if (arr[n][m] == 0)
+				{                                       //если не попали по кораблю
+					cout << "SECOND PLAYER MISSED!" << endl;
+
+					arr[n][m] = 2;
+					for (int i = 0; i < rzm; i++)
+					{
+						for (int j = 0; j < rzm; j++)
+						{
+							cout << arr[i][j] << " ";     //вывод поля после выстрела
+						}
+						cout << endl;
+					}
+					cout << endl;
+				}
+			}
+
+			if (poradok % 2 == 1)                                 //ХОД ПЕРВОГО ИГРОКА
+			{
+				cout << "FIRST PLAYER, YOUR TURN!" << endl;
+				cout << "Press Enter to continue" << endl;
+				system("pause");
+
+				cout << 1 << 1 << 1 << 1 << 1 << 1 << 1 << endl;
+				cout << 1 << " " << " " << " " << " " << " " << 1 << endl;
+				cout << 1 << " " << " " << 1 << " " << " " << 1 << endl;
+				cout << 1 << " " << 1 << 1 << " " << " " << 1 << endl;
+				cout << 1 << " " << " " << 1 << " " << " " << 1 << endl;
+				cout << 1 << " " << " " << 1 << " " << " " << 1 << endl;
+				cout << 1 << " " << 1 << 1 << 1 << " " << 1 << endl;
+				cout << 1 << " " << " " << " " << " " << " " << 1 << endl;
+				cout << 1 << 1 << 1 << 1 << 1 << 1 << 1 << endl;
+
+				cout << "Enter the coordinates of the cell you want to shoot at:" << endl;
+
+				cin >> n >> m;
+
+				if (arr2[n][m] == 1)    // если попали по кораблю
+				{
+					cout << "FIRST PLAYER HITS THE SHIP!" << endl;
+
+					arr2[n][m] = 2;
+					proverka2 = proverka2 - 1;
+
+					for (int i = 0; i < rzm; i++)
+					{
+						for (int j = 0; j < rzm; j++)    // вывод поля после выстрела
+						{
+							cout << arr2[i][j] << " ";
+						}
+						cout << endl;
+					}
+					cout << endl;
+				}
+
+				else if (arr2[n][m] == 2)              //повторное попадание в какую-то точку
+				{
+					cout << "You have already shot at this point!" << endl;
+				}
+
+				else if (arr2[n][m] == 0)
+				{                                       //если не попали по кораблю
+					cout << "FIRST PLAYER MISSED!" << endl;
+
+					arr2[n][m] = 2;
+					for (int i = 0; i < rzm; i++)
+					{
+						for (int j = 0; j < rzm; j++)
+						{
+							cout << arr2[i][j] << " ";     //вывод поля после выстрела
+						}
+						cout << endl;
+					}
+					cout << endl;
+				}
+			}
+			cout << "FIRST PLAYER SHIPS:" << proverka1 << " " << "SECOND PLAYER SHIPS:" << proverka2 << endl;
+			poradok = poradok + 1;
+
+			if (proverka1 == 0)
+			{
+				cout << "SECOND PLAYER WINS!" << endl;
+				break;
+			}
+
+			if (proverka2 == 0)
+			{
+				cout << "FIRST PLAYER WINS!" << endl;
+				break;
+			}
+
+		}
+	}
+}
