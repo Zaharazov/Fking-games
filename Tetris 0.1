@@ -1,0 +1,233 @@
+// версия 1.5
+// Добавил возможность начать игру еще раз без перезапуска программы.
+// Теперь система определяет, побит ли прошлый рекорд и в этом случае обновляет значение рекорда.
+
+#include <iostream>
+#include "windows.h"                        // библиотека для таймингов
+#include <conio.h>                          // библиотека для взаимодействия с игроком, наверное, я просто на всякий случай вставил это себе в код из учебного файла, чтобы что то заработало
+using namespace std;
+int main()
+{
+	int pole[20][10];
+	int igra;
+	double v = 300;
+	int pobeda = 0;
+	int zanovo = 0;
+	int record = 0;
+	int record_p;
+
+	cout << "Do you want to play?" << endl;
+	cout << "If you want to play, press 1." << endl;
+	cout << "if you don't want to play, press 2" << endl;
+
+	cin >> igra;       // игрок выбирает, а надо ли ему вообще в это играть
+
+	if (igra == 2)
+	{
+		return 0;
+	}
+	else
+	{
+		cout << "If you have a record, enter 1..." << endl;
+		cin >> record_p;
+		if (record_p == 1)
+		{
+			cout << "Enter your high score:" << endl;
+			cin >> record;
+		}
+
+		while (zanovo = 1)
+		{
+			for (int i = 0; i < 20; i++)
+			{
+				for (int j = 0; j < 10; j++)                 // создали поле в виде массива
+				{
+					pole[i][j] = 0;
+				}
+			}
+
+			for (int i = 0; i < 20; i++)
+			{
+				for (int j = 0; j < 10; j++)  //вывод изначального поля, без этого все поломается
+				{
+					cout << "." << " ";
+				}
+				cout << endl;
+			}
+			cout << endl;
+			// фигура падает и анимация \/ \/
+			int k = 0, g = 4;
+			int lose = 0;
+
+			while (lose != 1)
+			{
+				for (int p = 0; p < 20; p++)
+				{
+					if (k == 20)
+					{
+						pole[19][g] = 1;   //оставляем фигуру снизу
+						k = 0;
+						g = 4;
+						break;
+					}
+
+					if (pole[1][g] == 1 && pole[2][g] == 1)
+					{							            // конец игры с багом (обидно кста, он не фиксится)
+						lose = 1;
+						break;
+					}
+
+					if (pole[k + 1][g] == 1)
+					{
+						pole[k][g] = 1;
+						k = 0;              //контакт фигур друг с другом
+						g = 4;
+						break;
+					}
+
+					pole[k][g] = 1;
+
+					cout << endl << endl << endl << endl << endl;     // эта строчка выглядит смешно, она нужна исключительно для красоты
+
+					cout << " THE GAME: |TETRIS|   " << endl;        // вывод на экран всего поля \/\/
+
+					for (int i = 0; i < 20; i++)
+					{
+						for (int j = 0; j < 10; j++)
+						{
+							if (pole[i][j] == 0)
+								cout << "." << " ";
+							else
+								cout << "o" << " ";
+						}
+						cout << endl;
+					}
+					cout << endl;
+
+					char c = 0;
+					if (_kbhit()) c = _getch();         // не знаю, что это, но это начало Управления Пользователем (УП)
+					if (c == 'a')
+					{
+						if (g == 0 || pole[k][g - 1] == 1)              // блок уезжает влево
+						{
+							g = g;
+						}
+						else
+						{
+							pole[k][g] = 0;
+							g--;
+						}
+					}
+					if (c == 'd')
+					{
+						if (g == 9 || pole[k][g + 1] == 1)
+						{
+							g = g;                                   // блок уезжает вправо
+						}
+						else
+						{
+							pole[k][g] = 0;
+							g++;
+						}
+					}
+					if (c == 's')
+					{
+						if (pole[k + 2][g] == 1 || pole[k + 1][g] == 1)   // блок уезжает вниз
+						{
+							k = k;
+						}
+						else
+						{
+							pole[k][g] = 0;
+							int min = 0;
+							for (int i = 0; i < 20; i++)
+							{
+								if (pole[i][g] == 0)
+								{
+									min = i;                   // теперь блок идет вниз до упора
+								}
+								else
+								{
+									break;
+								}
+							}
+							k = min - 1;
+						}
+					}
+					if (c == ' ')
+					{
+						cout << "       PAUSE" << endl;
+						system("pause");
+					}
+
+					k = k + 1;
+					pole[k - 1][g] = 0;
+					Sleep(v);
+
+					system("CLS");         // очистка поля чтоб глаза не вытекли при смене кадра
+				}
+
+				int padenie = 0;
+
+				for (int i = 0; i < 20; i++)
+				{
+					int sloj = 0;
+					for (int j = 0; j < 10; j++)
+					{
+						if (pole[i][j] == 1)     //проверка на собранную линию
+						{
+							sloj = sloj + 1;
+						}
+					}
+
+					if (sloj == 10)
+					{
+						for (int j = 0; j < 10; j++)     //очистка собранной линии
+						{
+							pole[i][j] = 0;
+						}
+						cout << "YOU GOT 1 POINT!" << endl;
+						pobeda = pobeda + 1;
+						Sleep(1000);
+						padenie = 1;
+						v = v - 10;     // увеличение скорости 
+					}
+				}
+
+				if (padenie == 1)
+				{
+					for (int i = 19; i >= 1; i--)
+					{
+						for (int j = 0; j < 10; j++)
+						{                                     // падение фигур после очистки линии
+							pole[i][j] = pole[i - 1][j];
+						}
+					}
+				}
+
+			}
+
+			cout << "The game is over!" << endl;
+			cout << "YOU HAVE EARNED " << pobeda << " POINTS" << endl << endl;
+
+			if (pobeda > record)
+			{
+				cout << "CONGRATULATIONS, YOU HAVE A NEW RECORD!" << endl;
+				record = pobeda;
+				cout << "YOUR RECORD: " << record << endl;
+			}
+			else
+			{
+				cout << "There are " << record - pobeda + 1 << " points left until the new record." << endl;
+			}
+
+			cout << "If you want to play again, press 1, otherwise press any key." << endl;   //игра заново
+			cin >> zanovo;
+			if (zanovo != 1)
+			{
+				return 0;
+			}
+		}
+
+	}     //тут вся игра
+}
